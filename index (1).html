@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elan — Goal Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: #f0f7f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 32px 16px; }
+  .page { width: 100%; max-width: 900px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .page-title { font-size: 20px; font-weight: 500; color: #0D2B2A; letter-spacing: -0.01em; }
+  .elan-logo { display: flex; align-items: center; gap: 7px; }
+  .elan-e { display: flex; flex-direction: column; gap: 2.5px; width: 16px; }
+  .elan-e span { display: block; height: 3px; background: #2A9D8F; border-radius: 1px; }
+  .elan-e span:nth-child(2) { width: 80%; clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%); }
+  .elan-wordmark { font-size: 15px; font-weight: 500; letter-spacing: 0.1em; color: #2A9D8F; }
+  .sub { font-size: 13px; color: #5a7a78; margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; width: 100%; }
+  .cell { border-radius: 4px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9.5px; font-weight: 400; padding: 4px 3px; min-height: 58px; line-height: 1.3; word-break: break-word; position: relative; font-family: 'IBM Plex Sans', sans-serif; transition: filter 0.1s; }
+  .cell.editable { cursor: pointer; }
+  .cell.editable:hover { filter: brightness(0.93); }
+  .cell.core { background: #0D2B2A; color: #E8F5F3; font-size: 9px; font-weight: 500; white-space: pre-line; }
+  .cell.theme { background: #2A9D8F; color: #E8F5F3; font-weight: 500; font-size: 9.5px; white-space: pre-line; }
+  .cell.filled { background: #E8F5F3; color: #0D2B2A; font-weight: 500; }
+  .cell.empty { background: #fff; color: #9bbfba; border: 0.5px solid #c8e8e3; }
+  .cell.active-edit { outline: 2px solid #2A9D8F; outline-offset: -2px; }
+  .tip-dot { display: none; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #2A9D8F; pointer-events: none; }
+  .cell.has-tip .tip-dot { display: block; }
+  .tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #0D2B2A; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #E8F5F3; width: 190px; z-index: 99; line-height: 1.5; display: none; pointer-events: none; white-space: normal; text-align: left; }
+  .cell:hover .tooltip { display: block; }
+  .editor { margin-top: 14px; background: #fff; border: 0.5px solid #c8e8e3; border-radius: 8px; padding: 16px; display: none; }
+  .editor.open { display: block; }
+  .editor-title { font-size: 12px; font-weight: 500; color: #0D2B2A; margin-bottom: 12px; }
+  .editor label { font-size: 11px; color: #5a7a78; display: block; margin-bottom: 4px; }
+  .editor input, .editor textarea { width: 100%; border: 0.5px solid #c8e8e3; border-radius: 5px; padding: 7px 10px; font-size: 13px; font-family: 'IBM Plex Sans', sans-serif; color: #0D2B2A; background: #f4faf9; margin-bottom: 12px; resize: none; outline: none; }
+  .editor input:focus, .editor textarea:focus { border-color: #2A9D8F; background: #fff; }
+  .editor textarea { height: 70px; }
+  .editor-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ebtn { border: 0.5px solid #c8e8e3; background: #f4faf9; color: #0D2B2A; border-radius: 5px; padding: 6px 16px; font-size: 12px; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; transition: background 0.1s; }
+  .ebtn:hover { background: #e0f0ee; }
+  .ebtn.primary { background: #2A9D8F; color: #E8F5F3; border-color: #2A9D8F; }
+  .ebtn.primary:hover { background: #227f72; }
+  .ebtn.danger { color: #c0392b; border-color: #f5c6c6; }
+  .ebtn.danger:hover { background: #fdf0f0; }
+  .bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; flex-wrap: wrap; gap: 8px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; }
+  .li { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #5a7a78; }
+  .ld { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .status { font-size: 11px; color: #2A9D8F; font-weight: 500; min-height: 16px; }
+  .status.error { color: #c0392b; }
+  @media (max-width: 600px) { .cell { font-size: 8px; min-height: 44px; } .grid { gap: 2px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="page-title">Elan — Goal Framework</div>
+    <div class="elan-logo">
+      <div class="elan-e"><span></span><span></span><span></span></div>
+      <div class="elan-wordmark">ELAN</div>
+    </div>
+  </div>
+  <div class="sub">Click any cell to add your label and reasoning. Hover a filled cell to read the reasoning.</div>
+  <div class="grid" id="grid"></div>
+  <div class="editor" id="editor">
+    <div class="editor-title" id="editor-title">Edit cell</div>
+    <label>Label (1–2 words)</label>
+    <input id="e-label" type="text" maxlength="30" placeholder="e.g. Coffee Rota" />
+    <label>Reasoning (optional)</label>
+    <textarea id="e-tip" placeholder="Why does this action matter?"></textarea>
+    <div class="editor-btns">
+      <button class="ebtn primary" id="e-save">Save</button>
+      <button class="ebtn danger" id="e-clear">Clear cell</button>
+      <button class="ebtn" id="e-cancel">Cancel</button>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="legend">
+      <div class="li"><div class="ld" style="background:#0D2B2A;"></div>Core goal</div>
+      <div class="li"><div class="ld" style="background:#2A9D8F;"></div>Key themes</div>
+      <div class="li"><div class="ld" style="background:#fff;border:1px solid #c8e8e3;"></div>To complete</div>
+      <div class="li"><div class="ld" style="background:#2A9D8F;border-radius:50%;width:8px;height:8px;"></div>Has reasoning</div>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script>
+const MASTER_KEY = '$2a$10$HlWm2DrthdyL8151JjVI..QFHwWd25J0yxXzjfTz3Ro6AkxRxVrEi';
+const BIN_ID_KEY = 'elan_mandala_bin_id';
+
+const BLOCK_ORDER = ['Team','Founder Discipline','M&A Process','Tech','CORE','Referral Network','Pipeline','Brand','Buyer Network'];
+const DISPLAY_LABELS = {'Team':'Team','Founder Discipline':'Founder\nDiscipline','M&A Process':'M&A\nProcess','Tech':'Tech','Referral Network':'Referral\nNetwork','Pipeline':'Pipeline','Brand':'Brand','Buyer Network':'Buyer\nNetwork'};
+const SURROUND_KEYS = ['Team','Founder Discipline','M&A Process','Tech','','Referral Network','Pipeline','Brand','Buyer Network'];
+const ALL_THEMES = ['Team','Founder Discipline','M&A Process','Tech','Referral Network','Pipeline','Brand','Buyer Network'];
+const ROHIT_THEMES = ['Pipeline','Buyer Network','Referral Network'];
+const ROHIT_DATA = {
+  'Pipeline': [
+    {label:'Coffee\nRota', tip:'Systematic weekly catch-ups with dormant contacts to surface deals before they go to market'},
+    {label:'Deal\nAlerts', tip:"Set triggers so your network knows exactly what you're looking for"},
+    {label:'LinkedIn\nDepth', tip:'Comment, post, stay visible to founders in your target sectors'},
+    {label:'Annual\nCalls', tip:'Every contact gets a touchpoint once a year — no ask, just relationship maintenance'},
+    {label:'Intro\nRequests', tip:'Proactively ask top relationships for two warm intros per quarter'},
+    {label:'Sector\nFocus', tip:'Narrow pipeline conversations to 2–3 sectors so your network knows who to send'},
+    {label:'CRM\nDiscipline', tip:'Log every conversation — pipeline dies when follow-up slips'},
+    {label:'Event\nPresence', tip:'One targeted industry event per quarter to re-activate warm ties'},
+  ],
+  'Buyer Network': [
+    {label:'Buyer\nMapping', tip:'Build a living list of active acquirers by sector, size, and appetite'},
+    {label:'Mandate\nClarity', tip:'Every buyer should know your deal criteria in one sentence'},
+    {label:'Quarterly\nUpdates', tip:'Send buyers a short market update to stay top of mind without selling'},
+    {label:'Track\nRecords', tip:'Document completed deals and share selectively — proof builds trust'},
+    {label:'Club\nDeals', tip:'Identify buyers open to co-investment; expands capacity and relationships'},
+    {label:'Off-Market\nFirst', tip:'Give key buyers first look on select deals — creates loyalty'},
+    {label:'Feedback\nLoops', tip:'After every pass, ask why — buyer intelligence sharpens future deal matching'},
+    {label:'Exclusivity\nTalks', tip:'Build rapport so buyers come to you directly before going elsewhere'},
+  ],
+  'Referral Network': [
+    {label:'Lawyer\nLunches', tip:'Corporate solicitors see deals earliest — regular face time is non-negotiable'},
+    {label:'PE\nRelationships', tip:"Funds receive deals they can't do — be their trusted redirect"},
+    {label:'Reciprocity\nLog', tip:'Track every referral given and received — networks die without reciprocity'},
+    {label:'Introducer\nList', tip:'Maintain your top 15 referrers and review monthly'},
+    {label:'Case\nStudies', tip:'Share anonymised deal stories so referrers understand what good looks like'},
+    {label:'IFA\nNetwork', tip:'Financial advisers with business-owner clients are an underused M&A referral channel'},
+    {label:'Joint\nContent', tip:"Co-author a short insight piece with a lawyer or fund — deepens the relationship"},
+    {label:'Thank\nPublicly', tip:'Acknowledge referrers where appropriate — small gestures compound over 3 years'},
+  ]
+};
+
+let state = {};
+let binId = localStorage.getItem(BIN_ID_KEY) || null;
+let activeKey = null;
+let activeDiv = null;
+
+function showStatus(msg, isError) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (isError ? ' error' : '');
+  if (msg && !isError) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000);
+}
+
+async function createBin() {
+  const res = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': MASTER_KEY,
+      'X-Bin-Name': 'elan-mandala',
+      'X-Bin-Private': 'false'
+    },
+    body: JSON.stringify({ state: {} })
+  });
+  if (!res.ok) throw new Error('Create failed: ' + res.status);
+  const data = await res.json();
+  return data.metadata.id;
+}
+
+async function loadState() {
+  showStatus('Loading...');
+  try {
+    if (!binId) {
+      binId = await createBin();
+      localStorage.setItem(BIN_ID_KEY, binId);
+      state = {};
+      showStatus('');
+    } else {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        headers: { 'X-Master-Key': MASTER_KEY }
+      });
+      if (!res.ok) throw new Error('Load failed: ' + res.status);
+      const data = await res.json();
+      state = data.record.state || {};
+      showStatus('');
+    }
+  } catch(e) {
+    showStatus('Could not connect to shared storage', true);
+    console.error(e);
+  }
+  render();
+}
+
+async function saveState() {
+  showStatus('Saving...');
+  try {
+    if (!binId) {
+      binId = await createBin();
+      localStorage.setItem(BIN_ID_KEY, binId);
+    }
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': MASTER_KEY
+      },
+      body: JSON.stringify({ state })
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error('Save failed ' + res.status + ': ' + err);
+    }
+    showStatus('Saved for the whole team');
+  } catch(e) {
+    showStatus('Save failed — ' + e.message, true);
+    console.error(e);
+  }
+}
+
+function getRohitDefault(theme, lr, lc) {
+  const flat = ROHIT_DATA[theme];
+  if (!flat) return null;
+  const idx = lr * 3 + lc;
+  const ai = idx < 4 ? idx : idx - 1;
+  return flat[ai] || null;
+}
+
+function updateCellDisplay(div, label, tip) {
+  const span = div.querySelector('span');
+  span.textContent = label;
+  div.classList.remove('filled', 'empty', 'has-tip');
+  div.classList.add(label ? 'filled' : 'empty');
+  const oldTT = div.querySelector('.tooltip');
+  if (oldTT) oldTT.remove();
+  if (tip) {
+    div.classList.add('has-tip');
+    const tt = document.createElement('div');
+    tt.className = 'tooltip';
+    tt.textContent = tip;
+    div.insertBefore(tt, div.querySelector('.tip-dot'));
+  }
+}
+
+function openEditor(div, key, label, tip, themeName) {
+  if (activeDiv) activeDiv.classList.remove('active-edit');
+  activeKey = key; activeDiv = div;
+  div.classList.add('active-edit');
+  const ed = document.getElementById('editor');
+  ed.classList.add('open');
+  document.getElementById('editor-title').textContent = 'Editing — ' + themeName;
+  document.getElementById('e-label').value = label.replace(/\n/g, ' ') || '';
+  document.getElementById('e-tip').value = tip || '';
+  document.getElementById('e-label').focus();
+  ed.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeEditor() {
+  document.getElementById('editor').classList.remove('open');
+  if (activeDiv) activeDiv.classList.remove('active-edit');
+  activeKey = null; activeDiv = null;
+}
+
+document.getElementById('e-save').addEventListener('click', async () => {
+  if (!activeKey) return;
+  const lv = document.getElementById('e-label').value.trim();
+  const tv = document.getElementById('e-tip').value.trim();
+  state[activeKey] = { label: lv, tip: tv };
+  updateCellDisplay(activeDiv, lv, tv);
+  closeEditor();
+  await saveState();
+});
+
+document.getElementById('e-clear').addEventListener('click', async () => {
+  if (!activeKey) return;
+  state[activeKey] = { label: '', tip: '' };
+  updateCellDisplay(activeDiv, '', '');
+  closeEditor();
+  await saveState();
+});
+
+document.getElementById('e-cancel').addEventListener('click', closeEditor);
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for (let br = 0; br < 3; br++) {
+    for (let cr = 0; cr < 3; cr++) {
+      for (let bc = 0; bc < 3; bc++) {
+        const bi = br * 3 + bc;
+        const theme = BLOCK_ORDER[bi];
+        const isCore = theme === 'CORE';
+        const isRohit = ROHIT_THEMES.includes(theme);
+        const isTheme = ALL_THEMES.includes(theme);
+        for (let cc = 0; cc < 3; cc++) {
+          const isCenter = cr === 1 && cc === 1;
+          const key = `em_b${bi}_r${cr}_c${cc}`;
+          const div = document.createElement('div');
+          div.className = 'cell';
+          let text = '', tip = '', editable = false;
+          if (isCore) {
+            if (isCenter) { text = '25 Deals\nClosed by\nApril 2029'; div.classList.add('core'); }
+            else { const sk = SURROUND_KEYS[cr * 3 + cc]; text = sk ? (DISPLAY_LABELS[sk] || sk) : ''; div.classList.add('theme'); }
+          } else if (isTheme) {
+            if (isCenter) { text = DISPLAY_LABELS[theme] || theme; div.classList.add('theme'); }
+            else {
+              editable = true; div.classList.add('editable');
+              if (isRohit) {
+                const saved = state[key]; const def = getRohitDefault(theme, cr, cc);
+                if (saved !== undefined) { text = saved.label || ''; tip = saved.tip || ''; }
+                else if (def) { text = def.label; tip = def.tip; }
+              } else {
+                const saved = state[key];
+                text = saved ? saved.label || '' : '';
+                tip = saved ? saved.tip || '' : '';
+              }
+              div.classList.add(text ? 'filled' : 'empty');
+              if (tip) div.classList.add('has-tip');
+            }
+          }
+          const span = document.createElement('span');
+          span.style.cssText = 'display:block;width:100%;white-space:pre-line;pointer-events:none;';
+          span.textContent = text;
+          div.appendChild(span);
+          const dot = document.createElement('div'); dot.className = 'tip-dot'; div.appendChild(dot);
+          if (tip) { const tt = document.createElement('div'); tt.className = 'tooltip'; tt.textContent = tip; div.insertBefore(tt, dot); }
+          if (editable) {
+            const t = theme;
+            div.addEventListener('click', () => {
+              const curLabel = div.querySelector('span').textContent;
+              const curTip = div.querySelector('.tooltip') ? div.querySelector('.tooltip').textContent : '';
+              openEditor(div, key, curLabel, curTip, t);
+            });
+          }
+          grid.appendChild(div);
+        }
+      }
+    }
+  }
+}
+
+loadState();
+</script>
+</body>
+</html>
