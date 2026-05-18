@@ -22,12 +22,16 @@
   .cell.editable { cursor: pointer; }
   .cell.editable:hover { filter: brightness(0.93); }
   .cell.core { background: #0D2B2A; color: #E8F5F3; font-size: 9px; font-weight: 500; white-space: pre-line; }
-  .cell.theme { background: #2A9D8F; color: #E8F5F3; font-weight: 500; font-size: 9.5px; white-space: pre-line; }
+  .cell.theme { background: #2A9D8F; color: #E8F5F3; font-weight: 500; font-size: 9.5px; white-space: pre-line; cursor: pointer; }
+  .cell.theme:hover { filter: brightness(0.93); }
+  .cell.theme-surround { background: #2A9D8F; color: #E8F5F3; font-weight: 500; font-size: 9.5px; white-space: pre-line; cursor: pointer; }
+  .cell.theme-surround:hover { filter: brightness(0.93); }
   .cell.filled { background: #E8F5F3; color: #0D2B2A; font-weight: 500; }
   .cell.empty { background: #fff; color: #9bbfba; border: 0.5px solid #c8e8e3; }
   .cell.active-edit { outline: 2px solid #2A9D8F; outline-offset: -2px; }
-  .tip-dot { display: none; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #2A9D8F; pointer-events: none; }
+  .tip-dot { display: none; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #fff; pointer-events: none; opacity: 0.7; }
   .cell.has-tip .tip-dot { display: block; }
+  .cell.filled .tip-dot, .cell.empty .tip-dot { background: #2A9D8F; }
   .tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #0D2B2A; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #E8F5F3; width: 190px; z-index: 99; line-height: 1.5; display: none; pointer-events: none; white-space: normal; text-align: left; }
   .cell:hover .tooltip { display: block; }
   .editor { margin-top: 14px; background: #fff; border: 0.5px solid #c8e8e3; border-radius: 8px; padding: 16px; display: none; }
@@ -62,17 +66,17 @@
       <div class="elan-wordmark">ELAN</div>
     </div>
   </div>
-  <div class="sub">Click any cell to add your label and reasoning. Hover a filled cell to read the reasoning.</div>
+  <div class="sub">Click any cell to edit. Hover a filled cell to read the reasoning.</div>
   <div class="grid" id="grid"></div>
   <div class="editor" id="editor">
     <div class="editor-title" id="editor-title">Edit cell</div>
-    <label>Label (1–2 words)</label>
-    <input id="e-label" type="text" maxlength="30" placeholder="e.g. Coffee Rota" />
-    <label>Reasoning (optional)</label>
+    <label id="e-label-label">Label (1–2 words)</label>
+    <input id="e-label" type="text" maxlength="40" placeholder="e.g. Coffee Rota" />
+    <label id="e-tip-label">Reasoning (optional)</label>
     <textarea id="e-tip" placeholder="Why does this action matter?"></textarea>
     <div class="editor-btns">
       <button class="ebtn primary" id="e-save">Save</button>
-      <button class="ebtn danger" id="e-clear">Clear cell</button>
+      <button class="ebtn danger" id="e-clear">Reset to default</button>
       <button class="ebtn" id="e-cancel">Cancel</button>
     </div>
   </div>
@@ -93,20 +97,45 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const TABLE = 'mandala';
 const ROW_ID = 1;
 
-const BLOCK_ORDER = ['Team','Founder Discipline','M&A Process','Tech','CORE','Referral Network','Warm','Brand','Buyer Network'];
-const DISPLAY_LABELS = {'Team':'Team','Founder Discipline':'Founder\nDiscipline','M&A Process':'M&A\nProcess','Tech':'Tech','Referral Network':'Referral\nNetwork','Warm':'Warm','Brand':'Brand','Buyer Network':'Buyer\nNetwork'};
-const SURROUND_KEYS = ['Team','Founder Discipline','M&A Process','Tech','','Referral Network','Warm','Brand','Buyer Network'];
-const ALL_THEMES = ['Team','Founder Discipline','M&A Process','Tech','Referral Network','Warm','Brand','Buyer Network'];
-const ROHIT_THEMES = ['Warm','Buyer Network','Referral Network'];
+const BLOCK_ORDER = ['Team','Founder Discipline','M&A Process','Tech','CORE','Referral Network','Pipeline','Brand','Buyer Network'];
+
+// Default display labels for theme centre cells
+const DEFAULT_THEME_LABELS = {
+  'Team': 'Team',
+  'Founder Discipline': 'Founder\nDiscipline',
+  'M&A Process': 'M&A\nProcess',
+  'Tech': 'Tech',
+  'Referral Network': 'Referral\nNetwork',
+  'Pipeline': 'Pipeline',
+  'Brand': 'Brand',
+  'Buyer Network': 'Buyer\nNetwork'
+};
+
+// Default display labels for the surround ring around CORE
+const DEFAULT_SURROUND_LABELS = {
+  'Team': 'Team',
+  'Founder Discipline': 'Founder\nDiscipline',
+  'M&A Process': 'M&A\nProcess',
+  'Tech': 'Tech',
+  'Referral Network': 'Referral\nNetwork',
+  'Pipeline': 'Pipeline',
+  'Brand': 'Brand',
+  'Buyer Network': 'Buyer\nNetwork'
+};
+
+const SURROUND_KEYS = ['Team','Founder Discipline','M&A Process','Tech','','Referral Network','Pipeline','Brand','Buyer Network'];
+const ALL_THEMES = ['Team','Founder Discipline','M&A Process','Tech','Referral Network','Pipeline','Brand','Buyer Network'];
+const ROHIT_THEMES = ['Pipeline','Buyer Network','Referral Network'];
+
 const ROHIT_DATA = {
-  'Warm': [
+  'Pipeline': [
     {label:'Coffee\nRota', tip:'Systematic weekly catch-ups with dormant contacts to surface deals before they go to market'},
     {label:'Deal\nAlerts', tip:"Set triggers so your network knows exactly what you're looking for"},
     {label:'LinkedIn\nDepth', tip:'Comment, post, stay visible to founders in your target sectors'},
     {label:'Annual\nCalls', tip:'Every contact gets a touchpoint once a year — no ask, just relationship maintenance'},
     {label:'Intro\nRequests', tip:'Proactively ask top relationships for two warm intros per quarter'},
-    {label:'Sector\nFocus', tip:'Narrow Warm conversations to 2–3 sectors so your network knows who to send'},
-    {label:'CRM\nDiscipline', tip:'Log every conversation — Warm dies when follow-up slips'},
+    {label:'Sector\nFocus', tip:'Narrow pipeline conversations to 2–3 sectors so your network knows who to send'},
+    {label:'CRM\nDiscipline', tip:'Log every conversation — pipeline dies when follow-up slips'},
     {label:'Event\nPresence', tip:'One targeted industry event per quarter to re-activate warm ties'},
   ],
   'Buyer Network': [
@@ -134,6 +163,8 @@ const ROHIT_DATA = {
 let state = {};
 let activeKey = null;
 let activeDiv = null;
+let activeIsThemeCell = false;
+let activeDefaultLabel = '';
 
 const headers = {
   'apikey': SUPABASE_KEY,
@@ -194,11 +225,13 @@ function getRohitDefault(theme, lr, lc) {
   return flat[ai] || null;
 }
 
-function updateCellDisplay(div, label, tip) {
+function updateCellDisplay(div, label, tip, isTheme) {
   const span = div.querySelector('span');
   span.textContent = label;
-  div.classList.remove('filled', 'empty', 'has-tip');
-  div.classList.add(label ? 'filled' : 'empty');
+  if (!isTheme) {
+    div.classList.remove('filled', 'empty', 'has-tip');
+    div.classList.add(label ? 'filled' : 'empty');
+  }
   const oldTT = div.querySelector('.tooltip');
   if (oldTT) oldTT.remove();
   if (tip) {
@@ -207,18 +240,27 @@ function updateCellDisplay(div, label, tip) {
     tt.className = 'tooltip';
     tt.textContent = tip;
     div.insertBefore(tt, div.querySelector('.tip-dot'));
+  } else {
+    div.classList.remove('has-tip');
   }
 }
 
-function openEditor(div, key, label, tip, themeName) {
+function openEditor(div, key, label, tip, title, isThemeCell, defaultLabel) {
   if (activeDiv) activeDiv.classList.remove('active-edit');
-  activeKey = key; activeDiv = div;
+  activeKey = key;
+  activeDiv = div;
+  activeIsThemeCell = isThemeCell;
+  activeDefaultLabel = defaultLabel || '';
   div.classList.add('active-edit');
   const ed = document.getElementById('editor');
   ed.classList.add('open');
-  document.getElementById('editor-title').textContent = 'Editing — ' + themeName;
+  document.getElementById('editor-title').textContent = 'Editing — ' + title;
   document.getElementById('e-label').value = label.replace(/\n/g, ' ') || '';
   document.getElementById('e-tip').value = tip || '';
+  // Theme cells: hide reasoning for cleanliness, show just label
+  document.getElementById('e-tip-label').style.display = isThemeCell ? 'none' : 'block';
+  document.getElementById('e-tip').style.display = isThemeCell ? 'none' : 'block';
+  document.getElementById('e-clear').textContent = isThemeCell ? 'Reset to default' : 'Clear cell';
   document.getElementById('e-label').focus();
   ed.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -226,23 +268,31 @@ function openEditor(div, key, label, tip, themeName) {
 function closeEditor() {
   document.getElementById('editor').classList.remove('open');
   if (activeDiv) activeDiv.classList.remove('active-edit');
-  activeKey = null; activeDiv = null;
+  activeKey = null;
+  activeDiv = null;
+  activeIsThemeCell = false;
 }
 
 document.getElementById('e-save').addEventListener('click', async () => {
   if (!activeKey) return;
   const lv = document.getElementById('e-label').value.trim();
-  const tv = document.getElementById('e-tip').value.trim();
+  const tv = activeIsThemeCell ? '' : document.getElementById('e-tip').value.trim();
   state[activeKey] = { label: lv, tip: tv };
-  updateCellDisplay(activeDiv, lv, tv);
+  updateCellDisplay(activeDiv, lv, tv, activeIsThemeCell);
   closeEditor();
   await saveState();
 });
 
 document.getElementById('e-clear').addEventListener('click', async () => {
   if (!activeKey) return;
-  state[activeKey] = { label: '', tip: '' };
-  updateCellDisplay(activeDiv, '', '');
+  // For theme cells, reset to default label; for action cells, clear completely
+  if (activeIsThemeCell) {
+    delete state[activeKey];
+    updateCellDisplay(activeDiv, activeDefaultLabel, '', true);
+  } else {
+    state[activeKey] = { label: '', tip: '' };
+    updateCellDisplay(activeDiv, '', '', false);
+  }
   closeEditor();
   await saveState();
 });
@@ -252,6 +302,7 @@ document.getElementById('e-cancel').addEventListener('click', closeEditor);
 function render() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
+
   for (let br = 0; br < 3; br++) {
     for (let cr = 0; cr < 3; cr++) {
       for (let bc = 0; bc < 3; bc++) {
@@ -260,21 +311,59 @@ function render() {
         const isCore = theme === 'CORE';
         const isRohit = ROHIT_THEMES.includes(theme);
         const isTheme = ALL_THEMES.includes(theme);
+
         for (let cc = 0; cc < 3; cc++) {
           const isCenter = cr === 1 && cc === 1;
           const key = `em_b${bi}_r${cr}_c${cc}`;
           const div = document.createElement('div');
           div.className = 'cell';
-          let text = '', tip = '', editable = false;
+          let text = '', tip = '', isThemeCell = false, defaultLabel = '';
+
           if (isCore) {
-            if (isCenter) { text = '25 Deals\nClosed by\nApril 2029'; div.classList.add('core'); }
-            else { const sk = SURROUND_KEYS[cr * 3 + cc]; text = sk ? (DISPLAY_LABELS[sk] || sk) : ''; div.classList.add('theme'); }
+            if (isCenter) {
+              text = '25 Deals\nClosed by\nApril 2029';
+              div.classList.add('core');
+            } else {
+              // Surround ring — editable theme labels
+              const sk = SURROUND_KEYS[cr * 3 + cc];
+              if (sk) {
+                const surroundKey = `surround_${sk.replace(/\s+/g,'_')}`;
+                defaultLabel = DEFAULT_SURROUND_LABELS[sk] || sk;
+                const saved = state[surroundKey];
+                text = saved ? (saved.label || defaultLabel) : defaultLabel;
+                tip = saved ? (saved.tip || '') : '';
+                div.classList.add('theme-surround');
+                isThemeCell = true;
+                const sk2 = sk, dk = surroundKey, dl = defaultLabel;
+                div.addEventListener('click', () => {
+                  const curLabel = div.querySelector('span').textContent;
+                  openEditor(div, dk, curLabel, '', sk2, true, dl);
+                });
+              } else {
+                div.classList.add('theme');
+              }
+            }
           } else if (isTheme) {
-            if (isCenter) { text = DISPLAY_LABELS[theme] || theme; div.classList.add('theme'); }
-            else {
-              editable = true; div.classList.add('editable');
+            if (isCenter) {
+              // Theme centre cell — now editable
+              const themeKey = `theme_center_${theme.replace(/\s+/g,'_')}`;
+              defaultLabel = DEFAULT_THEME_LABELS[theme] || theme;
+              const saved = state[themeKey];
+              text = saved ? (saved.label || defaultLabel) : defaultLabel;
+              tip = '';
+              div.classList.add('theme');
+              isThemeCell = true;
+              const dl = defaultLabel, tk = themeKey, tn = theme;
+              div.addEventListener('click', () => {
+                const curLabel = div.querySelector('span').textContent;
+                openEditor(div, tk, curLabel, '', tn, true, dl);
+              });
+            } else {
+              // Action cell
+              div.classList.add('editable');
               if (isRohit) {
-                const saved = state[key]; const def = getRohitDefault(theme, cr, cc);
+                const saved = state[key];
+                const def = getRohitDefault(theme, cr, cc);
                 if (saved !== undefined) { text = saved.label || ''; tip = saved.tip || ''; }
                 else if (def) { text = def.label; tip = def.tip; }
               } else {
@@ -284,22 +373,32 @@ function render() {
               }
               div.classList.add(text ? 'filled' : 'empty');
               if (tip) div.classList.add('has-tip');
+              const t = theme;
+              div.addEventListener('click', () => {
+                const curLabel = div.querySelector('span').textContent;
+                const curTip = div.querySelector('.tooltip') ? div.querySelector('.tooltip').textContent : '';
+                openEditor(div, key, curLabel, curTip, t, false, '');
+              });
             }
           }
+
           const span = document.createElement('span');
           span.style.cssText = 'display:block;width:100%;white-space:pre-line;pointer-events:none;';
           span.textContent = text;
           div.appendChild(span);
-          const dot = document.createElement('div'); dot.className = 'tip-dot'; div.appendChild(dot);
-          if (tip) { const tt = document.createElement('div'); tt.className = 'tooltip'; tt.textContent = tip; div.insertBefore(tt, dot); }
-          if (editable) {
-            const t = theme;
-            div.addEventListener('click', () => {
-              const curLabel = div.querySelector('span').textContent;
-              const curTip = div.querySelector('.tooltip') ? div.querySelector('.tooltip').textContent : '';
-              openEditor(div, key, curLabel, curTip, t);
-            });
+
+          const dot = document.createElement('div');
+          dot.className = 'tip-dot';
+          div.appendChild(dot);
+
+          if (tip) {
+            div.classList.add('has-tip');
+            const tt = document.createElement('div');
+            tt.className = 'tooltip';
+            tt.textContent = tip;
+            div.insertBefore(tt, dot);
           }
+
           grid.appendChild(div);
         }
       }
