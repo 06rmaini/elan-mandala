@@ -8,9 +8,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'IBM Plex Sans',sans-serif;background:#f0f7f6;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px;}
-.page{width:100%;max-width:960px;}
-
-/* ── Top bar ── */
+.page{width:100%;max-width:980px;}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
 .page-title{font-size:20px;font-weight:600;color:#0D2B2A;letter-spacing:-0.01em;}
 .elan-logo{display:flex;align-items:center;gap:7px;}
@@ -20,7 +18,7 @@ body{font-family:'IBM Plex Sans',sans-serif;background:#f0f7f6;min-height:100vh;
 .elan-wordmark{font-size:15px;font-weight:600;letter-spacing:0.1em;color:#2A9D8F;}
 .sub{font-size:12px;color:#5a7a78;margin-bottom:12px;}
 
-/* ── KPI Bar ── */
+/* KPI */
 .kpi-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
 .kpi-card{background:#fff;border:0.5px solid #c8e8e3;border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;}
 .kpi-label{font-size:9.5px;font-weight:500;color:#5a7a78;text-transform:uppercase;letter-spacing:0.04em;}
@@ -30,46 +28,31 @@ body{font-family:'IBM Plex Sans',sans-serif;background:#f0f7f6;min-height:100vh;
 .kpi-edit-btn{font-size:9px;color:#2A9D8F;cursor:pointer;border:0.5px solid #c8e8e3;background:#f4faf9;border-radius:3px;padding:2px 6px;font-family:inherit;}
 .kpi-edit-btn:hover{background:#e0f0ee;}
 
-/* ── Owner legend ── */
-.owner-legend{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+/* Legend */
+.owner-legend{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
 .ol-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:#3a5a58;}
 .ol-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
 
-/* ── Grid ── */
-.grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:100%;}
-.cell{border-radius:4px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:9px;font-weight:400;padding:3px 2px;min-height:54px;line-height:1.25;word-break:break-word;position:relative;font-family:'IBM Plex Sans',sans-serif;transition:filter 0.1s;}
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;width:100%;}
+.block{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
+.cell{border-radius:4px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:8.5px;font-weight:400;padding:3px 2px;min-height:56px;line-height:1.22;word-break:break-word;position:relative;font-family:'IBM Plex Sans',sans-serif;transition:filter 0.1s;}
 .cell.editable{cursor:pointer;}
-.cell.editable:hover{filter:brightness(0.91);}
-
-/* Core */
+.cell.editable:hover{filter:brightness(0.92);}
 .cell.core{background:#0D2B2A;color:#E8F5F3;font-size:8.5px;font-weight:600;white-space:pre-line;}
-
-/* Theme centre & surround ring */
-.cell.theme,.cell.theme-surround{background:#2A9D8F;color:#E8F5F3;font-weight:600;font-size:9px;white-space:pre-line;cursor:pointer;}
-.cell.theme:hover,.cell.theme-surround:hover{filter:brightness(0.91);}
-
-/* Owner colours for action cells */
-.cell.owner-CEO  {background:#E8F5F3;color:#0D2B2A;}
-.cell.owner-Pres {background:#D6E8FA;color:#1A3F6F;}
-.cell.owner-CTO  {background:#FEF3DC;color:#7A4F00;}
-.cell.owner-All  {background:#EAF0EF;color:#2A4A47;}
-.cell.empty      {background:#fff;color:#9bbfba;border:0.5px solid #c8e8e3;}
-
-.cell.active-edit{outline:2px solid #2A9D8F;outline-offset:-2px;}
-
-/* Tip dot */
-.tip-dot{display:none;position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.7);pointer-events:none;}
+.cell.theme,.cell.theme-surround{background:#ffffff;color:#0D2B2A;font-weight:600;font-size:9px;white-space:pre-line;cursor:pointer;border:1px solid #c8e8e3;}
+.cell.theme:hover,.cell.theme-surround:hover{filter:brightness(0.96);}
+.cell.near-term{background:#002060;color:#ffffff;}
+.cell.long-term{background:#2A9D8F;color:#ffffff;}
+.cell.empty{background:#fff;color:#9bbfba;border:0.5px solid #c8e8e3;}
+.cell.active-edit{outline:2px solid #E9A23B;outline-offset:-2px;z-index:5;}
+.tip-dot{display:none;position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.6);pointer-events:none;}
 .cell.has-tip .tip-dot{display:block;}
-.cell.owner-CEO.has-tip .tip-dot,.cell.owner-All.has-tip .tip-dot{background:#2A9D8F;}
-
-/* Tooltip */
 .tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0D2B2A;border-radius:6px;padding:8px 10px;font-size:10.5px;color:#E8F5F3;width:190px;z-index:99;line-height:1.5;display:none;pointer-events:none;white-space:normal;text-align:left;}
 .cell:hover .tooltip{display:block;}
+.owner-tag{position:absolute;bottom:3px;left:4px;font-size:7px;font-weight:600;opacity:0.7;pointer-events:none;letter-spacing:0.03em;}
 
-/* Owner tag */
-.owner-tag{position:absolute;bottom:3px;left:3px;font-size:7px;font-weight:600;opacity:0.65;pointer-events:none;letter-spacing:0.03em;}
-
-/* ── Editor panel ── */
+/* Editor */
 .editor{margin-top:12px;background:#fff;border:0.5px solid #c8e8e3;border-radius:8px;padding:16px;display:none;}
 .editor.open{display:block;}
 .editor-title{font-size:12px;font-weight:600;color:#0D2B2A;margin-bottom:12px;}
@@ -77,103 +60,90 @@ body{font-family:'IBM Plex Sans',sans-serif;background:#f0f7f6;min-height:100vh;
 .editor input,.editor textarea,.editor select{width:100%;border:0.5px solid #c8e8e3;border-radius:5px;padding:7px 10px;font-size:12px;font-family:'IBM Plex Sans',sans-serif;color:#0D2B2A;background:#f4faf9;margin-bottom:12px;resize:none;outline:none;}
 .editor input:focus,.editor textarea:focus,.editor select:focus{border-color:#2A9D8F;background:#fff;}
 .editor textarea{height:68px;}
+.editor-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .editor-btns{display:flex;gap:8px;flex-wrap:wrap;}
-.ebtn{border:0.5px solid #c8e8e3;background:#f4faf9;color:#0D2B2A;border-radius:5px;padding:6px 14px;font-size:11.5px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:background 0.1s;}
+.ebtn{border:0.5px solid #c8e8e3;background:#f4faf9;color:#0D2B2A;border-radius:5px;padding:6px 14px;font-size:11.5px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;}
 .ebtn:hover{background:#e0f0ee;}
 .ebtn.primary{background:#2A9D8F;color:#E8F5F3;border-color:#2A9D8F;}
 .ebtn.primary:hover{background:#227f72;}
 .ebtn.danger{color:#c0392b;border-color:#f5c6c6;}
 .ebtn.danger:hover{background:#fdf0f0;}
 
-/* ── Bottom bar ── */
-.bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
-.legend{display:flex;gap:12px;flex-wrap:wrap;}
-.li{display:flex;align-items:center;gap:5px;font-size:10.5px;color:#5a7a78;}
-.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.bottom{display:flex;align-items:center;justify-content:flex-end;margin-top:10px;}
 .status{font-size:11px;color:#2A9D8F;font-weight:500;min-height:16px;}
 .status.error{color:#c0392b;}
 
-/* KPI modal */
 .kpi-modal-bg{position:fixed;inset:0;background:rgba(13,43,42,0.4);z-index:200;display:flex;align-items:center;justify-content:center;}
-.kpi-modal{background:#fff;border-radius:10px;padding:22px;width:280px;font-family:'IBM Plex Sans',sans-serif;box-shadow:0 4px 24px rgba(0,0,0,0.12);}
+.kpi-modal{background:#fff;border-radius:10px;padding:22px;width:280px;box-shadow:0 4px 24px rgba(0,0,0,0.12);}
 .kpi-modal-title{font-size:13px;font-weight:600;color:#0D2B2A;margin-bottom:14px;}
 .kpi-modal label{font-size:11px;color:#5a7a78;display:block;margin-bottom:4px;}
-.kpi-modal input{width:100%;border:0.5px solid #c8e8e3;border-radius:5px;padding:7px 10px;font-size:13px;font-family:'IBM Plex Sans',sans-serif;color:#0D2B2A;background:#f4faf9;margin-bottom:14px;outline:none;}
+.kpi-modal input{width:100%;border:0.5px solid #c8e8e3;border-radius:5px;padding:7px 10px;font-size:13px;font-family:inherit;color:#0D2B2A;background:#f4faf9;margin-bottom:14px;outline:none;}
 .kpi-modal input:focus{border-color:#2A9D8F;background:#fff;}
 .kpi-modal-btns{display:flex;gap:8px;justify-content:flex-end;}
 
-@media(max-width:600px){.cell{font-size:7.5px;min-height:42px;}.grid{gap:2px;}.kpi-bar{grid-template-columns:1fr;}}
+@media(max-width:600px){.cell{font-size:7px;min-height:42px;}.grid{gap:2px;}.kpi-bar{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="page">
-
-  <!-- Top bar -->
   <div class="topbar">
     <div class="page-title">Elan — Goal Framework</div>
-    <div class="elan-logo">
-      <div class="elan-e"><span></span><span></span><span></span></div>
-      <div class="elan-wordmark">ELAN</div>
-    </div>
+    <div class="elan-logo"><div class="elan-e"><span></span><span></span><span></span></div><div class="elan-wordmark">ELAN</div></div>
   </div>
-  <div class="sub">Click any cell to edit label, owner or reasoning. Hover a cell to read reasoning.</div>
+  <div class="sub">Click any cell to edit. Hover a cell to read reasoning.</div>
 
-  <!-- KPI Bar -->
   <div class="kpi-bar">
     <div class="kpi-card">
       <div class="kpi-label">Company LinkedIn Followers</div>
       <div class="kpi-value" id="kpi-linkedin">—</div>
-      <div class="kpi-meta">
-        <div class="kpi-updated" id="kpi-linkedin-date"></div>
-        <button class="kpi-edit-btn" onclick="openKpi('linkedin')">Update</button>
-      </div>
+      <div class="kpi-meta"><div class="kpi-updated" id="kpi-linkedin-date"></div><button class="kpi-edit-btn" onclick="openKpi('linkedin')">Update</button></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Website Visits (Monthly)</div>
       <div class="kpi-value" id="kpi-visits">—</div>
-      <div class="kpi-meta">
-        <div class="kpi-updated" id="kpi-visits-date"></div>
-        <button class="kpi-edit-btn" onclick="openKpi('visits')">Update</button>
-      </div>
+      <div class="kpi-meta"><div class="kpi-updated" id="kpi-visits-date"></div><button class="kpi-edit-btn" onclick="openKpi('visits')">Update</button></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Days Since Founding</div>
       <div class="kpi-value" id="kpi-days">—</div>
-      <div class="kpi-meta">
-        <div class="kpi-updated" style="font-size:9px;color:#9bbfba;">Since 24 May 2025</div>
-      </div>
+      <div class="kpi-meta"><div class="kpi-updated" style="font-size:9px;color:#9bbfba;">Since 24 May 2025</div></div>
     </div>
   </div>
 
-  <!-- Owner legend -->
   <div class="owner-legend">
-    <div class="ol-item"><div class="ol-dot" style="background:#2A9D8F;"></div>Yash (CEO)</div>
-    <div class="ol-item"><div class="ol-dot" style="background:#D6E8FA;border:1px solid #4A90D9;"></div>Rohit (Pres)</div>
-    <div class="ol-item"><div class="ol-dot" style="background:#FEF3DC;border:1px solid #E9A23B;"></div>Ashar (CTO)</div>
-    <div class="ol-item"><div class="ol-dot" style="background:#EAF0EF;border:1px solid #c8e8e3;"></div>All</div>
-    <div class="ol-item"><div class="ol-dot" style="background:#2A9D8F;border-radius:50%;width:8px;height:8px;"></div>Has reasoning</div>
+    <div class="ol-item"><div class="ol-dot" style="background:#002060;"></div>Near-term (&lt;12 months)</div>
+    <div class="ol-item"><div class="ol-dot" style="background:#2A9D8F;"></div>Long-term (12+ months)</div>
+    <div class="ol-item" style="margin-left:8px;color:#9bbfba;">|</div>
+    <div class="ol-item">CEO = Yash &nbsp; Pres = Rohit &nbsp; CTO = Ashar</div>
   </div>
 
-  <!-- Mandala grid -->
   <div class="grid" id="grid"></div>
 
-  <!-- Editor panel -->
   <div class="editor" id="editor">
     <div class="editor-title" id="editor-title">Edit cell</div>
     <label>Label</label>
-    <input id="e-label" type="text" maxlength="40" placeholder="1–3 words"/>
-    <div id="e-owner-wrap">
-      <label>Owner</label>
-      <select id="e-owner">
-        <option value="CEO">Yash (CEO)</option>
-        <option value="Pres">Rohit (Pres)</option>
-        <option value="CTO">Ashar (CTO)</option>
-        <option value="All">All</option>
-      </select>
+    <input id="e-label" type="text" maxlength="44" placeholder="1–3 words"/>
+    <div class="editor-row" id="e-meta-row">
+      <div>
+        <label>Owner</label>
+        <select id="e-owner">
+          <option value="CEO">Yash (CEO)</option>
+          <option value="Pres">Rohit (Pres)</option>
+          <option value="CTO">Ashar (CTO)</option>
+          <option value="All">All</option>
+        </select>
+      </div>
+      <div>
+        <label>Timeframe</label>
+        <select id="e-term">
+          <option value="N">Near-term (&lt;12 mo)</option>
+          <option value="L">Long-term (12+ mo)</option>
+        </select>
+      </div>
     </div>
     <div id="e-tip-wrap">
       <label>Reasoning (optional)</label>
-      <textarea id="e-tip" placeholder="Why does this action matter?"></textarea>
+      <textarea id="e-tip" placeholder="Why does this matter?"></textarea>
     </div>
     <div class="editor-btns">
       <button class="ebtn primary" id="e-save">Save</button>
@@ -182,434 +152,262 @@ body{font-family:'IBM Plex Sans',sans-serif;background:#f0f7f6;min-height:100vh;
     </div>
   </div>
 
-  <!-- Bottom -->
-  <div class="bottom">
-    <div class="legend">
-      <div class="li"><div class="ld" style="background:#0D2B2A;"></div>Core goal</div>
-      <div class="li"><div class="ld" style="background:#2A9D8F;"></div>Key themes</div>
-      <div class="li"><div class="ld" style="background:#fff;border:1px solid #c8e8e3;"></div>Empty</div>
-    </div>
-    <div class="status" id="status"></div>
-  </div>
+  <div class="bottom"><div class="status" id="status"></div></div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://crktlztfsyqbwnguqqjl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNya3RsenRmc3lxYnduZ3VxcWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDI4NjYsImV4cCI6MjA5MzQ3ODg2Nn0.IGpfgsGw0NNadnfm8kA-yY6b3wW-9q5o0PRA8CI1LS4';
-const TABLE = 'mandala';
-const ROW_ID = 1;
+const SUPABASE_URL='https://crktlztfsyqbwnguqqjl.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNya3RsenRmc3lxYnduZ3VxcWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDI4NjYsImV4cCI6MjA5MzQ3ODg2Nn0.IGpfgsGw0NNadnfm8kA-yY6b3wW-9q5o0PRA8CI1LS4';
+const TABLE='mandala';const ROW_ID=1;
 
-// ── Mandala data ─────────────────────────────────────────────
-const BLOCK_ORDER = ['Team','Founder Discipline','M&A Process','Tech','CORE','Referral Network','Pipeline','Brand','Buyer Network'];
+// 9 blocks: TL,TM,TR / ML,CORE,MR / BL,BM,BR
+const BLOCK_ORDER=['Team','Founder Discipline','M&A Process','Tech','CORE','Brand','Referral Network','Buyer Network','Pipeline'];
 
-const SURROUND_KEYS = ['Team','Founder Discipline','M&A Process','Tech','','Referral Network','Pipeline','Brand','Buyer Network'];
+// Ring labels around the core goal
+const SURROUND_KEYS=['Team','Founder Discipline','M&A Process','Tech','','Referral Network','Pipeline','Brand','Buyer Network'];
+const SURROUND_DISPLAY={'Team':'Team','Founder Discipline':'Founder\nDiscipline','M&A Process':'M&A\nProcess','Tech':'Tech','Referral Network':'Referral\nNetwork','Pipeline':'Pipeline','Brand':'Brand','Buyer Network':'Buyer\nNetwork'};
 
-const DEFAULTS = {
-  'Team': {
-    label:'Team',
-    cells:[
-      {label:'Engineers\n(2x)',         owner:'CEO', tip:''},
-      {label:'Ashar\nFull Time',        owner:'CEO', tip:''},
-      {label:'Rohit\n3x/week',          owner:'CEO', tip:''},
-      {label:'Execution\nBankers (2x)', owner:'CEO', tip:''},
-      {label:'GTM Lead',                owner:'CEO', tip:''},
-      {label:'Senior\nBanker (1x)',     owner:'CEO', tip:''},
-      {label:'2 Account\nExecutives',   owner:'CEO', tip:''},
-      {label:'Office Space',            owner:'CEO', tip:''},
-    ]
-  },
-  'Founder Discipline': {
-    label:'Founder\nDiscipline',
-    cells:[
-      {label:'Physical Rec.\n(3x / week)', owner:'CEO', tip:''},
-      {label:'Annual Offsite',             owner:'CEO', tip:''},
-      {label:'Quarterly\nHorada Review',   owner:'CEO', tip:''},
-      {label:'Non Work Call\n1/week',      owner:'CEO', tip:''},
-      {label:'Comms\nDiscipline',          owner:'CEO', tip:''},
-      {label:'3 Networking\nEvent / Qtr',  owner:'CEO', tip:''},
-      {label:'1 Workflow\n/ quarter',      owner:'CEO', tip:''},
-      {label:'In Person\n1 / Qtr',        owner:'CEO', tip:''},
-    ]
-  },
-  'M&A Process': {
-    label:'M&A\nProcess',
-    cells:[
-      {label:'Qualification\nEngine',    owner:'CEO', tip:''},
-      {label:'First Close\nby Q2 2027',  owner:'CEO', tip:''},
-      {label:'Outreach\nAutomation',     owner:'CTO', tip:''},
-      {label:'No Execution\nfrom Yash',  owner:'CEO', tip:''},
-      {label:'Deal Portal',              owner:'CTO', tip:''},
-      {label:'Deal\nPlaybook',           owner:'CEO', tip:''},
-      {label:'Deal\nDiagnostics',        owner:'CEO', tip:''},
-      {label:'BD Workflow\n(2-3x)',       owner:'CEO', tip:''},
-    ]
-  },
-  'Tech': {
-    label:'Tech',
-    cells:[
-      {label:'Qualification\nEngine',        owner:'CTO', tip:''},
-      {label:'M&A\nProcesses',               owner:'CTO', tip:''},
-      {label:'Open Source\nPrecedents Tool', owner:'CTO', tip:''},
-      {label:'Mandate\nConversion (DB)',      owner:'CTO', tip:''},
-      {label:'Content\nGeneration',          owner:'CTO', tip:''},
-      {label:'CRM /\nAutomated loops',       owner:'CTO', tip:''},
-      {label:'Support\nInhouse Workflows',   owner:'CTO', tip:''},
-      {label:'Buyer Outreach\nAutomat.',     owner:'CTO', tip:''},
-    ]
-  },
-  'Referral Network': {
-    label:'Referral\nNetwork',
-    cells:[
-      {label:'Lawyer\nLunches',    owner:'Pres', tip:'Corporate solicitors see deals earliest — regular face time is non-negotiable'},
-      {label:'PE\nRelationships',  owner:'Pres', tip:"Funds receive deals they can't do — be their trusted redirect"},
-      {label:'Reciprocity\nLog',   owner:'Pres', tip:'Track every referral given and received — networks die without reciprocity'},
-      {label:'Introducer\nList',   owner:'Pres', tip:'Maintain your top 15 referrers and review monthly'},
-      {label:'Case\nStudies',      owner:'Pres', tip:'Share anonymised deal stories so referrers understand what good looks like'},
-      {label:'IFA\nNetwork',       owner:'Pres', tip:'Financial advisers with business-owner clients are an underused M&A referral channel'},
-      {label:'Joint\nContent',     owner:'Pres', tip:'Co-author a short insight piece with a lawyer or fund — deepens the relationship'},
-      {label:'Thank\nPublicly',    owner:'Pres', tip:'Acknowledge referrers where appropriate — small gestures compound over 3 years'},
-    ]
-  },
-  'Pipeline': {
-    label:'Pipeline',
-    cells:[
-      {label:'Quarterly Sector\nNewsletter',    owner:'Pres', tip:'Systematic catch-ups with dormant contacts to surface deals before they go to market'},
-      {label:'Buyer Mandates\n(2-3x Yr)',       owner:'Pres', tip:"Set triggers so your network knows exactly what you're looking for"},
-      {label:'Partners /\nReferrals',           owner:'Pres', tip:'Comment, post, stay visible to founders in your target sectors'},
-      {label:'New Partner\n(1x Year)',           owner:'Pres', tip:'Proactively ask top relationships for two warm intros per quarter'},
-      {label:'Cold Motion\nfor Partners',       owner:'Pres', tip:'Narrow pipeline conversations to 2–3 sectors so your network knows who to send'},
-      {label:'Automated\nLinkedIn Engage.',     owner:'Pres', tip:'Log every conversation — pipeline dies when follow-up slips'},
-      {label:'Memberships\n(1x Year)',          owner:'Pres', tip:'One targeted industry event per quarter to re-activate warm ties'},
-      {label:'Existing Seller\nInbound (1x Yr)',owner:'Pres', tip:''},
-    ]
-  },
-  'Brand': {
-    label:'Brand',
-    cells:[
-      {label:'Open Source\nPrecedents Tool', owner:'All',  tip:''},
-      {label:'1k LinkedIn\n(Company Page)',  owner:'CEO',  tip:''},
-      {label:'5k LinkedIn\n(Founder Page)',  owner:'CEO',  tip:''},
-      {label:'3 Speaking\nSlots / Year',     owner:'Pres', tip:''},
-      {label:'Recognition\n/ Award',         owner:'All',  tip:''},
-      {label:'5 Elan Hosted\nEvents / Year', owner:'Pres', tip:''},
-      {label:'Press\nCoverage',              owner:'All',  tip:''},
-      {label:'Case\nStudies',                owner:'All',  tip:''},
-    ]
-  },
-  'Buyer Network': {
-    label:'Buyer\nNetwork',
-    cells:[
-      {label:'Buyer\nMapping',      owner:'Pres', tip:'Build a living list of active acquirers by sector, size, and appetite'},
-      {label:'Mandate\nClarity',    owner:'Pres', tip:'Every buyer should know your deal criteria in one sentence'},
-      {label:'Quarterly\nUpdates',  owner:'Pres', tip:'Send buyers a short market update to stay top of mind without selling'},
-      {label:'Track\nRecords',      owner:'Pres', tip:'Document completed deals and share selectively — proof builds trust'},
-      {label:'Club\nDeals',         owner:'Pres', tip:'Identify buyers open to co-investment; expands capacity and relationships'},
-      {label:'Off-Market\nFirst',   owner:'Pres', tip:'Give key buyers first look on select deals — creates loyalty'},
-      {label:'Feedback\nLoops',     owner:'Pres', tip:'After every pass, ask why — buyer intelligence sharpens future deal matching'},
-      {label:'Exclusivity\nTalks',  owner:'Pres', tip:'Build rapport so buyers come to you directly before going elsewhere'},
-    ]
-  },
+// Default cell content per block. cells order: TL,TM,TR,ML,MR,BL,BM,BR (skip centre)
+const DEFAULTS={
+ 'Team':{center:'Team',cells:[
+   {l:'Engineers\n(2x)',o:'CEO',t:'N',tip:''},
+   {l:'GTM Lead',o:'CEO',t:'N',tip:''},
+   {l:'Rohit\n(3x week)',o:'CEO',t:'L',tip:''},
+   {l:'Execution\nBankers (2x)',o:'CEO',t:'N',tip:''},
+   {l:'Account\nExec. (2x)',o:'CEO',t:'N',tip:''},
+   {l:'Senior\nBanker (1x)',o:'CEO',t:'N',tip:''},
+   {l:'Ashar\nFull Time',o:'CEO',t:'L',tip:''},
+   {l:'Office\nSpace',o:'CEO',t:'L',tip:''},
+ ]},
+ 'Founder Discipline':{center:'Founder\nDiscipline',cells:[
+   {l:'Physical Rec.\n(3x week)',o:'All',t:'L',tip:''},
+   {l:'In Person\n(1 / Qtr)',o:'CEO',t:'L',tip:''},
+   {l:'Workflow\n(1 / Qtr)',o:'All',t:'L',tip:''},
+   {l:'Annual\nOffsite',o:'CEO',t:'L',tip:''},
+   {l:'Comms\nDiscipline',o:'All',t:'L',tip:''},
+   {l:'Quarterly\nHorada Review',o:'CEO',t:'L',tip:''},
+   {l:'Non – Work\nCall (1x Week)',o:'CEO',t:'L',tip:''},
+   {l:'Network. Event\n(3 / Qtr)',o:'All',t:'L',tip:''},
+ ]},
+ 'M&A Process':{center:'M&A\nProcess',cells:[
+   {l:'Qualification\nEngine',o:'CTO',t:'N',tip:''},
+   {l:'Deal\nDiagnostics',o:'CEO',t:'N',tip:''},
+   {l:'Database\nFrontend',o:'CTO',t:'L',tip:''},
+   {l:'Deal\nPortal',o:'CTO',t:'N',tip:''},
+   {l:'Deal\nPlaybook',o:'CEO',t:'L',tip:''},
+   {l:'Limited Execution\nfrom Yash',o:'CTO',t:'N',tip:''},
+   {l:'First Close\nby Q2 2027',o:'CEO',t:'L',tip:''},
+   {l:'Buyer Outreach\nAutomat.',o:'CTO',t:'L',tip:''},
+ ]},
+ 'Tech':{center:'Tech',cells:[
+   {l:'Qualification\nEngine',o:'CTO',t:'N',tip:''},
+   {l:'Precedent\nTool',o:'CTO',t:'L',tip:''},
+   {l:'Database\nFrontend',o:'CTO',t:'L',tip:''},
+   {l:'Content\nGenerat.',o:'CTO',t:'N',tip:''},
+   {l:'Cold Engage.\n(20%)',o:'CTO',t:'L',tip:''},
+   {l:'BD Workflow\n(2-3x)',o:'CTO',t:'N',tip:''},
+   {l:'Buyer Outreach\nAutomat.',o:'CTO',t:'L',tip:''},
+   {l:'M&A Workflow\n(2-3x)',o:'CTO',t:'L',tip:''},
+ ]},
+ 'Brand':{center:'Brand',cells:[
+   {l:'Precedent\nTool',o:'CTO',t:'L',tip:''},
+   {l:'Speaking Engage.\n(3x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Company\nLinkedin (1k)',o:'CEO',t:'L',tip:''},
+   {l:'Founders\nLinkedin (5k)',o:'All',t:'L',tip:''},
+   {l:'Award',o:'Pres',t:'L',tip:''},
+   {l:'Elan Events\n(5x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Press\nCoverage',o:'Pres',t:'L',tip:''},
+   {l:'Case\nStudies',o:'CEO',t:'L',tip:''},
+ ]},
+ 'Referral Network':{center:'Mandate\nPipeline',cells:[
+   {l:'Referral\nDatabase',o:'Pres',t:'L',tip:'Track every referral given and received — networks die without reciprocity'},
+   {l:'Elan Events\n(5x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Cold Engage.\n(20%)',o:'CTO',t:'L',tip:''},
+   {l:'Existing Seller\nInbound (1x Year)',o:'Pres',t:'N',tip:''},
+   {l:'Industry Events\n(5x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Qualification\nEngine',o:'CTO',t:'N',tip:''},
+   {l:'GTM Lead',o:'CEO',t:'N',tip:''},
+   {l:'Account\nExec. (2x)',o:'CEO',t:'N',tip:''},
+ ]},
+ 'Buyer Network':{center:'Buyers',cells:[
+   {l:'Buyer Outreach\nAutomat.',o:'CTO',t:'L',tip:''},
+   {l:'Database\nFrontend',o:'CTO',t:'L',tip:''},
+   {l:'Motion for PEs to\nUnderstand Criteria',o:'Pres',t:'L',tip:'Funds receive deals they cannot do — be their trusted redirect'},
+   {l:'Industry Events\n(5x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Buyer Mandates\n(2-3x Yr)',o:'Pres',t:'L',tip:'Every buyer should know your deal criteria in one sentence'},
+   {l:'Quarterly Sector\nNewsletter',o:'CTO',t:'N',tip:'Send buyers a short market update to stay top of mind without selling'},
+   {l:'Precedent\nTool',o:'CTO',t:'L',tip:''},
+   {l:'Buyer Mandate\nPlaybook',o:'CEO',t:'L',tip:''},
+ ]},
+ 'Pipeline':{center:'Partners /\nReferrals',cells:[
+   {l:'New Partner\n(1x Year)',o:'Pres',t:'L',tip:''},
+   {l:'Academia',o:'CTO',t:'L',tip:''},
+   {l:'Existing Seller\nInbound (1x Year)',o:'Pres',t:'N',tip:''},
+   {l:'Elan Events\n(5x Year)',o:'Pres',t:'L',tip:'One targeted industry event per quarter to re-activate warm ties'},
+   {l:'Memberships\n(1x Year)',o:'Pres',t:'N',tip:''},
+   {l:'Referral\nDatabase',o:'Pres',t:'L',tip:''},
+   {l:'Cold Motion\nfor Partners',o:'CTO',t:'L',tip:''},
+   {l:'Automated Linkedin\nEngage.',o:'CTO',t:'N',tip:''},
+ ]},
 };
 
-// Owner colours
-const OWNER_CLASS = {CEO:'owner-CEO', Pres:'owner-Pres', CTO:'owner-CTO', All:'owner-All'};
-const OWNER_LABEL = {CEO:'CEO', Pres:'Pres', CTO:'CTO', All:'All'};
+const OWNER_LABEL={CEO:'CEO',Pres:'Pres',CTO:'CTO',All:'All'};
 
-let state = {};
-let activeKey = null;
-let activeDiv = null;
-let activeIsTheme = false;
-let activeDefault = null;
+let state={};let activeKey=null;let activeDiv=null;let activeIsTheme=false;let activeDefault=null;
 
-const SB_HEADERS = {
-  'apikey': SUPABASE_KEY,
-  'Authorization': 'Bearer ' + SUPABASE_KEY,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=minimal'
-};
+const SB={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
 
-function showStatus(msg, isError) {
-  const el = document.getElementById('status');
-  el.textContent = msg;
-  el.className = 'status' + (isError ? ' error' : '');
-  if (msg && !isError) setTimeout(() => { if(el.textContent===msg) el.textContent=''; }, 3000);
-}
+function showStatus(m,e){const el=document.getElementById('status');el.textContent=m;el.className='status'+(e?' error':'');if(m&&!e)setTimeout(()=>{if(el.textContent===m)el.textContent='';},3000);}
 
-async function loadState() {
+async function loadState(){
   showStatus('Loading...');
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${ROW_ID}&select=data`, {headers: SB_HEADERS});
-    const rows = await res.json();
-    state = (rows && rows.length > 0 && rows[0].data) ? rows[0].data : {};
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${ROW_ID}&select=data`,{headers:SB});
+    const rows=await res.json();
+    state=(rows&&rows.length>0&&rows[0].data)?rows[0].data:{};
     showStatus('');
-  } catch(e) {
-    state = {};
-    showStatus('Could not load — check connection', true);
-  }
-  renderKpis();
-  render();
+  }catch(e){state={};showStatus('Could not load — check connection',true);}
+  renderKpis();render();
 }
 
-async function saveState() {
+async function saveState(){
   showStatus('Saving...');
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
-      method: 'POST',
-      headers: {...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates'},
-      body: JSON.stringify({id: ROW_ID, data: state})
-    });
-    if (res.ok || res.status === 201 || res.status === 204) {
-      showStatus('Saved for the whole team');
-    } else {
-      throw new Error(await res.text());
-    }
-  } catch(e) {
-    showStatus('Save failed — ' + e.message, true);
-  }
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`,{method:'POST',headers:{...SB,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:ROW_ID,data:state})});
+    if(res.ok||res.status===201||res.status===204){showStatus('Saved for the whole team');}
+    else{throw new Error(await res.text());}
+  }catch(e){showStatus('Save failed — '+e.message,true);}
 }
 
-// ── KPI ──────────────────────────────────────────────────────
-function renderKpis() {
-  // Days since founding — always calculated
-  const founded = new Date('2025-05-24');
-  const today = new Date();
-  const days = Math.floor((today - founded) / 86400000);
-  document.getElementById('kpi-days').textContent = days.toLocaleString();
-
-  // LinkedIn
-  const li = state.__kpi_linkedin;
-  document.getElementById('kpi-linkedin').textContent = li ? Number(li.value).toLocaleString() : '—';
-  document.getElementById('kpi-linkedin-date').textContent = li ? 'Updated ' + li.date : '';
-
-  // Visits
-  const v = state.__kpi_visits;
-  document.getElementById('kpi-visits').textContent = v ? Number(v.value).toLocaleString() : '—';
-  document.getElementById('kpi-visits-date').textContent = v ? 'Updated ' + v.date : '';
+function renderKpis(){
+  const founded=new Date('2025-05-24');const today=new Date();
+  document.getElementById('kpi-days').textContent=Math.floor((today-founded)/86400000).toLocaleString();
+  const li=state.__kpi_linkedin;
+  document.getElementById('kpi-linkedin').textContent=li?Number(li.value).toLocaleString():'—';
+  document.getElementById('kpi-linkedin-date').textContent=li?'Updated '+li.date:'';
+  const v=state.__kpi_visits;
+  document.getElementById('kpi-visits').textContent=v?Number(v.value).toLocaleString():'—';
+  document.getElementById('kpi-visits-date').textContent=v?'Updated '+v.date:'';
 }
 
-let activeKpi = null;
-function openKpi(key) {
-  activeKpi = key;
-  const titles = {linkedin: 'Update LinkedIn Followers', visits: 'Update Monthly Website Visits'};
-  const current = state['__kpi_' + key];
-  const bg = document.createElement('div');
-  bg.className = 'kpi-modal-bg';
-  bg.id = 'kpi-modal-bg';
-  const m = document.createElement('div');
-  m.className = 'kpi-modal';
-  m.innerHTML = `<div class="kpi-modal-title">${titles[key]}</div>
-<label>New value</label>
-<input id="kpi-input" type="number" min="0" placeholder="e.g. 1250" value="${current ? current.value : ''}"/>
-<div class="kpi-modal-btns">
-  <button class="ebtn" id="kpi-cancel">Cancel</button>
-  <button class="ebtn primary" id="kpi-save">Save</button>
-</div>`;
-  bg.appendChild(m);
-  document.body.appendChild(bg);
+function openKpi(key){
+  const titles={linkedin:'Update LinkedIn Followers',visits:'Update Monthly Website Visits'};
+  const cur=state['__kpi_'+key];
+  const bg=document.createElement('div');bg.className='kpi-modal-bg';
+  const m=document.createElement('div');m.className='kpi-modal';
+  m.innerHTML=`<div class="kpi-modal-title">${titles[key]}</div><label>New value</label><input id="kpi-input" type="number" min="0" placeholder="e.g. 1250" value="${cur?cur.value:''}"/><div class="kpi-modal-btns"><button class="ebtn" id="kpi-cancel">Cancel</button><button class="ebtn primary" id="kpi-save">Save</button></div>`;
+  bg.appendChild(m);document.body.appendChild(bg);
   m.querySelector('#kpi-input').focus();
-  m.querySelector('#kpi-cancel').addEventListener('click', () => bg.remove());
-  bg.addEventListener('click', e => { if(e.target===bg) bg.remove(); });
-  m.querySelector('#kpi-save').addEventListener('click', async () => {
-    const val = parseInt(m.querySelector('#kpi-input').value);
-    if (isNaN(val)) return;
-    const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-    state['__kpi_' + key] = {value: val, date: today};
-    bg.remove();
-    renderKpis();
-    await saveState();
-  });
+  m.querySelector('#kpi-cancel').onclick=()=>bg.remove();
+  bg.onclick=e=>{if(e.target===bg)bg.remove();};
+  m.querySelector('#kpi-save').onclick=async()=>{
+    const val=parseInt(m.querySelector('#kpi-input').value);if(isNaN(val))return;
+    const today=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    state['__kpi_'+key]={value:val,date:today};bg.remove();renderKpis();await saveState();
+  };
 }
 
-// ── Editor ───────────────────────────────────────────────────
-function openEditor(div, key, label, owner, tip, isTheme, def) {
-  if (activeDiv) activeDiv.classList.remove('active-edit');
-  activeKey = key; activeDiv = div; activeIsTheme = isTheme; activeDefault = def;
+function openEditor(div,key,label,owner,term,tip,isTheme,def){
+  if(activeDiv)activeDiv.classList.remove('active-edit');
+  activeKey=key;activeDiv=div;activeIsTheme=isTheme;activeDefault=def;
   div.classList.add('active-edit');
-  const ed = document.getElementById('editor');
-  ed.classList.add('open');
-  document.getElementById('editor-title').textContent = 'Editing cell';
-  document.getElementById('e-label').value = label.replace(/\n/g,' ') || '';
-  document.getElementById('e-owner').value = owner || 'CEO';
-  document.getElementById('e-tip').value = tip || '';
-  // Hide owner/tip for theme cells
-  document.getElementById('e-owner-wrap').style.display = isTheme ? 'none' : 'block';
-  document.getElementById('e-tip-wrap').style.display = isTheme ? 'none' : 'block';
-  document.getElementById('e-clear').textContent = isTheme ? 'Reset to default' : 'Clear cell';
+  const ed=document.getElementById('editor');ed.classList.add('open');
+  document.getElementById('editor-title').textContent='Edit cell';
+  document.getElementById('e-label').value=label.replace(/\n/g,' ')||'';
+  document.getElementById('e-owner').value=owner||'CEO';
+  document.getElementById('e-term').value=term||'L';
+  document.getElementById('e-tip').value=tip||'';
+  document.getElementById('e-meta-row').style.display=isTheme?'none':'grid';
+  document.getElementById('e-tip-wrap').style.display=isTheme?'none':'block';
   document.getElementById('e-label').focus();
-  ed.scrollIntoView({behavior:'smooth', block:'nearest'});
+  ed.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function closeEditor(){document.getElementById('editor').classList.remove('open');if(activeDiv)activeDiv.classList.remove('active-edit');activeKey=null;activeDiv=null;}
 
-function closeEditor() {
-  document.getElementById('editor').classList.remove('open');
-  if (activeDiv) activeDiv.classList.remove('active-edit');
-  activeKey = null; activeDiv = null;
-}
-
-document.getElementById('e-save').addEventListener('click', async () => {
-  if (!activeKey) return;
-  const lv = document.getElementById('e-label').value.trim();
-  const ov = activeIsTheme ? (activeDefault ? activeDefault.owner || '' : '') : document.getElementById('e-owner').value;
-  const tv = activeIsTheme ? '' : document.getElementById('e-tip').value.trim();
-  state[activeKey] = {label: lv, owner: ov, tip: tv};
-  refreshCell(activeDiv, lv, ov, tv, activeIsTheme);
-  closeEditor();
-  await saveState();
-});
-
-document.getElementById('e-clear').addEventListener('click', async () => {
-  if (!activeKey) return;
-  if (activeIsTheme) {
-    delete state[activeKey];
-    const def = activeDefault;
-    refreshCell(activeDiv, def.label, '', '', true);
-  } else {
-    delete state[activeKey];
-    const def = activeDefault;
-    if (def) refreshCell(activeDiv, def.label, def.owner, def.tip, false);
-    else refreshCell(activeDiv, '', '', '', false);
+document.getElementById('e-save').onclick=async()=>{
+  if(!activeKey)return;
+  const lv=document.getElementById('e-label').value.trim();
+  if(activeIsTheme){state[activeKey]={label:lv};}
+  else{
+    const ov=document.getElementById('e-owner').value;
+    const tv=document.getElementById('e-term').value;
+    const rv=document.getElementById('e-tip').value.trim();
+    state[activeKey]={label:lv,owner:ov,term:tv,tip:rv};
   }
-  closeEditor();
-  await saveState();
-});
+  closeEditor();await saveState();render();
+};
+document.getElementById('e-clear').onclick=async()=>{
+  if(!activeKey)return;delete state[activeKey];closeEditor();await saveState();render();
+};
+document.getElementById('e-cancel').onclick=closeEditor;
 
-document.getElementById('e-cancel').addEventListener('click', closeEditor);
+function render(){
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  // Build 9 block containers in reading order (block index 0..8)
+  for(let bi=0;bi<9;bi++){
+    const theme=BLOCK_ORDER[bi];
+    const isCore=theme==='CORE';const td=DEFAULTS[theme];
+    const block=document.createElement('div');block.className='block';
 
-function refreshCell(div, label, owner, tip, isTheme) {
-  const span = div.querySelector('span');
-  span.textContent = label;
-  if (!isTheme) {
-    // Update owner class
-    div.classList.remove('owner-CEO','owner-Pres','owner-CTO','owner-All','empty');
-    if (label) {
-      div.classList.add(OWNER_CLASS[owner] || 'owner-All');
-    } else {
-      div.classList.add('empty');
-    }
-    // Update owner tag
-    const tag = div.querySelector('.owner-tag');
-    if (tag) tag.textContent = label ? (OWNER_LABEL[owner] || '') : '';
-  }
-  // Tip dot + tooltip
-  div.classList.remove('has-tip');
-  const oldTT = div.querySelector('.tooltip');
-  if (oldTT) oldTT.remove();
-  if (tip) {
-    div.classList.add('has-tip');
-    const tt = document.createElement('div');
-    tt.className = 'tooltip'; tt.textContent = tip;
-    div.insertBefore(tt, div.querySelector('.tip-dot'));
-  }
-}
+    for(let cr=0;cr<3;cr++){
+      for(let cc=0;cc<3;cc++){
+        const isCenter=cr===1&&cc===1;
+        const div=document.createElement('div');div.className='cell';
+        let text='',owner='',term='',tip='',key='',isTheme=false,def=null;
 
-// ── Render ───────────────────────────────────────────────────
-function render() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-
-  for (let br = 0; br < 3; br++) {
-    for (let cr = 0; cr < 3; cr++) {
-      for (let bc = 0; bc < 3; bc++) {
-        const bi = br * 3 + bc;
-        const theme = BLOCK_ORDER[bi];
-        const isCore = theme === 'CORE';
-        const themeData = DEFAULTS[theme];
-
-        for (let cc = 0; cc < 3; cc++) {
-          const isCenter = cr === 1 && cc === 1;
-          const div = document.createElement('div');
-          div.className = 'cell';
-          let text = '', owner = '', tip = '', key = '', isTheme = false, def = null;
-
-          if (isCore) {
-            if (isCenter) {
-              text = '25 Deals\nClosed by\nApril 2029';
-              div.classList.add('core');
-            } else {
-              // Surround ring — editable theme labels
-              const sk = SURROUND_KEYS[cr * 3 + cc];
-              if (sk) {
-                key = `surround_${sk.replace(/\W+/g,'_')}`;
-                const saved = state[key];
-                const defLabel = (DEFAULTS[sk] || {}).label || sk;
-                text = saved ? (saved.label || defLabel) : defLabel;
-                tip = '';
-                div.classList.add('theme-surround');
-                isTheme = true;
-                def = {label: defLabel};
-              }
-            }
-          } else if (themeData) {
-            if (isCenter) {
-              key = `theme_center_${theme.replace(/\W+/g,'_')}`;
-              const saved = state[key];
-              text = saved ? (saved.label || themeData.label) : themeData.label;
-              div.classList.add('theme');
-              isTheme = true;
-              def = {label: themeData.label};
-            } else {
-              // Action cell — figure out index (skip center)
-              const localIdx = cr * 3 + cc;
-              const actionIdx = localIdx < 4 ? localIdx : localIdx - 1;
-              const defCell = themeData.cells[actionIdx] || null;
-              key = `em_b${bi}_r${cr}_c${cc}`;
-              const saved = state[key];
-
-              if (saved !== undefined) {
-                text  = saved.label || '';
-                owner = saved.owner || (defCell ? defCell.owner : 'CEO');
-                tip   = saved.tip   || '';
-              } else if (defCell) {
-                text  = defCell.label;
-                owner = defCell.owner;
-                tip   = defCell.tip;
-              }
-
-              def = defCell;
-              div.classList.add('editable');
-              if (text) {
-                div.classList.add(OWNER_CLASS[owner] || 'owner-All');
-              } else {
-                div.classList.add('empty');
-              }
-              if (tip) div.classList.add('has-tip');
-
-              // Owner tag
-              const tag = document.createElement('div');
-              tag.className = 'owner-tag';
-              tag.textContent = text ? (OWNER_LABEL[owner] || '') : '';
-              div.appendChild(tag);
+        if(isCore){
+          if(isCenter){text='25 Deals\nClosed by\nApril 2029';div.classList.add('core');}
+          else{
+            const sk=SURROUND_KEYS[cr*3+cc];
+            if(sk){
+              key='surround_'+sk.replace(/\W+/g,'_');
+              const dl=SURROUND_DISPLAY[sk]||sk;
+              const saved=state[key];
+              text=saved?(saved.label||dl):dl;
+              div.classList.add('theme-surround');isTheme=true;def={label:dl};
             }
           }
-
-          const span = document.createElement('span');
-          span.style.cssText = 'display:block;width:100%;white-space:pre-line;pointer-events:none;';
-          span.textContent = text;
-          div.appendChild(span);
-
-          const dot = document.createElement('div');
-          dot.className = 'tip-dot';
-          div.appendChild(dot);
-
-          if (tip) {
-            const tt = document.createElement('div');
-            tt.className = 'tooltip'; tt.textContent = tip;
-            div.insertBefore(tt, dot);
+        }else if(td){
+          if(isCenter){
+            key='center_'+theme.replace(/\W+/g,'_');
+            const saved=state[key];
+            text=saved?(saved.label||td.center):td.center;
+            div.classList.add('theme');isTheme=true;def={label:td.center};
+          }else{
+            const li=cr*3+cc;const ai=li<4?li:li-1;
+            const dc=td.cells[ai]||null;
+            key=`em_b${bi}_r${cr}_c${cc}`;
+            const saved=state[key];
+            if(saved!==undefined){
+              text=saved.label||'';owner=saved.owner||(dc?dc.o:'CEO');
+              term=saved.term||(dc?dc.t:'L');tip=saved.tip||'';
+            }else if(dc){text=dc.l;owner=dc.o;term=dc.t;tip=dc.tip;}
+            def=dc;div.classList.add('editable');
+            if(text){div.classList.add(term==='N'?'near-term':'long-term');}else{div.classList.add('empty');}
+            if(tip)div.classList.add('has-tip');
+            const tag=document.createElement('div');tag.className='owner-tag';tag.textContent=text?(OWNER_LABEL[owner]||''):'';div.appendChild(tag);
           }
-
-          if (key && (isTheme || themeData)) {
-            const _key = key, _isTheme = isTheme, _def = def;
-            div.addEventListener('click', () => {
-              const curLabel = div.querySelector('span').textContent;
-              const curOwner = _isTheme ? '' : (state[_key] ? state[_key].owner : (_def ? _def.owner : 'CEO'));
-              const curTip   = div.querySelector('.tooltip') ? div.querySelector('.tooltip').textContent : '';
-              openEditor(div, _key, curLabel, curOwner, curTip, _isTheme, _def);
-            });
-          }
-
-          grid.appendChild(div);
         }
+
+        const span=document.createElement('span');span.style.cssText='display:block;width:100%;white-space:pre-line;pointer-events:none;';span.textContent=text;div.appendChild(span);
+        const dot=document.createElement('div');dot.className='tip-dot';div.appendChild(dot);
+        if(tip){const tt=document.createElement('div');tt.className='tooltip';tt.textContent=tip;div.insertBefore(tt,dot);}
+
+        if(key){
+          const _k=key,_it=isTheme,_d=def;
+          div.addEventListener('click',()=>{
+            const cl=div.querySelector('span').textContent;
+            const sv=state[_k]||{};
+            const co=_it?'':(sv.owner||(_d?_d.o:'CEO'));
+            const ct=_it?'':(sv.term||(_d?_d.t:'L'));
+            const cp=div.querySelector('.tooltip')?div.querySelector('.tooltip').textContent:'';
+            openEditor(div,_k,cl,co,ct,cp,_it,_d);
+          });
+        }
+        block.appendChild(div);
       }
     }
+    grid.appendChild(block);
   }
 }
 
