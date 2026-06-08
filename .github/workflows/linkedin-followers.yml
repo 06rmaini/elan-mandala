@@ -16,7 +16,4 @@ jobs:
           node-version: '20'
 
       - name: Fetch & update Supabase
-        env:
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: node scripts/scrape-linkedin.js

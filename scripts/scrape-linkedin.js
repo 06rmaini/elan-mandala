@@ -1,6 +1,6 @@
-const RAPIDAPI_KEY  = process.env.RAPIDAPI_KEY;
+const RAPIDAPI_KEY  = '258df5cc98mshcdc31725b41d656p184f11jsna354edbf6ed6';
 const SUPABASE_URL  = 'https://crktlztfsyqbwnguqqjl.supabase.co';
-const SUPABASE_KEY  = process.env.SUPABASE_KEY;
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNya3RsenRmc3lxYnduZ3VxcWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDI4NjYsImV4cCI6MjA5MzQ3ODg2Nn0.IGpfgsGw0NNadnfm8kA-yY6b3wW-9q5o0PRA8CI1LS4';
 
 async function run() {
   // Fetch follower count from RapidAPI
