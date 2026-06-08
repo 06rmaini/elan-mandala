@@ -15,12 +15,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install puppeteer
-
-      - name: Scrape & update Supabase
+      - name: Fetch & update Supabase
         env:
-          LINKEDIN_EMAIL:    ${{ secrets.LINKEDIN_EMAIL }}
-          LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
-          SUPABASE_KEY:      ${{ secrets.SUPABASE_KEY }}
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: node scripts/scrape-linkedin.js
